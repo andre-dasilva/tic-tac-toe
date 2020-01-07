@@ -73,7 +73,8 @@ namespace tic_tac_toe
             playerQueue.Enqueue(_playerTwo);
 
             Player currentPlayer = playerQueue.GetNext();
-            while (!CheckForWinner(currentPlayer))
+            bool isWinner = false;
+            while (!isWinner)
             {
                 DrawBoard(board);
                 int position = ReadBoardPosition(currentPlayer);
@@ -81,14 +82,21 @@ namespace tic_tac_toe
                 {
                     position = ReadBoardPosition(currentPlayer);
                 }
+                if (CheckForWinner(currentPlayer))
+                {
+                    isWinner = true;
+                }
                 currentPlayer = playerQueue.GetNext();
             }
+            DrawBoard(board);
             if (_winner == null)
             {
-                Console.WriteLine("It's a draw");
+                Console.ForegroundColor = ConsoleColor.Blue;
+                Console.WriteLine("It's a draw\n");
                 Environment.Exit(0);
             }
-            Console.WriteLine($"{_winner.Name} is the winner");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine($"{_winner.Name} is the winner\n");
             Environment.Exit(0);
         }
 
@@ -169,7 +177,7 @@ namespace tic_tac_toe
                         return false;
                     return true;
                 default:
-                    Console.WriteLine("The position is not valid. Only values from 1-9 are valid\n");
+                    Console.WriteLine("The position is not valid. Only values from 1-9 are valid");
                     return false;
             }
         }
@@ -181,14 +189,16 @@ namespace tic_tac_toe
             {
                 return true;
             }
-
             // check horizontal
             for (int x = 0; x < 3; x++)
             {
                 if (board[x, 0] == board[x, 1] && board[x, 1] == board[x, 2])
                 {
-                    _winner = player;
-                    return true;
+                    if (board[x, 0] != ' ' && board[x, 1] != ' ' && board[x, 2] != ' ')
+                    {
+                        _winner = player;
+                        return true;
+                    }
                 }
             }
             // check vertically
@@ -196,16 +206,23 @@ namespace tic_tac_toe
             {
                 if (board[0, y] == board[1, y] && board[1, y] == board[2, y])
                 {
-                    _winner = player;
-                    return true;
+                    if (board[0, y] != ' ' && board[1, y] != ' ' && board[2, y] != ' ')
+                    {
+                        _winner = player;
+                        return true;
+                    }
                 }
             }
             // check diagonally
-            if (board[0, 0] == board[1, 1] && board[1, 1] == board[2, 2]
-                || board[0, 2] == board[1, 1] && board[1, 1] == board[2, 0])
+            if ((board[0, 0] == board[1, 1] && board[1, 1] == board[2, 2])
+                || (board[0, 2] == board[1, 1] && board[1, 1] == board[2, 0]))
             {
-                _winner = player;
-                return true;
+                if ((board[0, 0] != ' ' && board[1, 1] != ' ' && board[2, 2] != ' ')
+                || (board[0, 2] != ' ' && board[1, 1] != ' ' && board[2, 0] != ' '))
+                {
+                    _winner = player;
+                    return true;
+                }
             }
             return false;
         }
